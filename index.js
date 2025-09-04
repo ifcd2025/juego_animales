@@ -6,19 +6,27 @@ let aciertos = 0;
 let fallos = 0;
 let tiempo = 0;
 let reloj;
-
+const sonido = {
+    acierto: new Audio("sonidos/acierto.mp3"),
+    fallo: new Audio("sonidos/fallo.mp3"),
+    victoria: new Audio("sonidos/aplausos.mp3")
+}
 
 function iniciar() {
     aciertos = 0;
     fallos = 0;
     tiempo = 0;
+    // Debemos eliminar un reloj antes de iniciar otro
+    clearInterval(reloj);
     reloj = setInterval(incrementarTiempo, 1000);
-    listaAnimalesActual = listaAnimalesOriginal;
+    // Debemos hacer una copia del array original
+    listaAnimalesActual = [...listaAnimalesOriginal];
     document.getElementById("aciertos").textContent = 0;
     document.getElementById("fallos").textContent = 0;
     document.getElementById("tiempo").textContent = 0;
     mostrarAnimales();
     generarPalabra();
+    document.getElementById("animales").addEventListener("click", comprobarAnimal);
 }
 
 function incrementarTiempo() {
@@ -29,6 +37,7 @@ function incrementarTiempo() {
 function mostrarAnimales() {
     aleatorio(listaAnimalesActual);
     const animales = document.getElementById("animales");
+    animales.textContent = "";
     for(const animal of listaAnimalesActual) {
         const div = document.createElement("div");
         animales.appendChild(div);
@@ -68,6 +77,7 @@ function comprobarAnimal(evt) {
     if(target.classList.contains("animal") && target.classList.contains("bien") == false) {
         if(target.dataset.animal == document.getElementById("animalElegido").textContent) {
             aciertos++;
+            sonido.acierto.play();
             document.getElementById("aciertos").textContent = aciertos;
             target.classList.add("bien");
             // Debemos eliminar la palabra acertada de la lista
@@ -78,6 +88,7 @@ function comprobarAnimal(evt) {
             comprobarVictoria();
         } else {
             fallos++;
+            sonido.fallo.play();
             document.getElementById("fallos").textContent = fallos;
             // Para que se pueda reproducir la animación más de una vez
             target.classList.remove("mal");
@@ -91,26 +102,48 @@ function comprobarAnimal(evt) {
 function comprobarVictoria() {
     if(listaAnimalesActual.length == 0) {
         clearInterval(reloj);
+        sonido.victoria.play();
         // Quitamos el listener para que no se pueda seguir pulsando en los animales
         document.getElementById("animales").removeEventListener("click", comprobarAnimal);
+        document.getElementById("animales").offsetWidth;
+        document.getElementById("animales").classList.add("animacionVictoria");
         Swal.fire({
-            title: "Do you want to save the changes?",
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            denyButtonText: `Don't save`
-            }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                Swal.fire("Saved!", "", "success");
-            } else if (result.isDenied) {
-                Swal.fire("Changes are not saved", "", "info");
-            }
+            title: "Enhorabuena",
+            html: `<div>Aciertos: ${aciertos}</div><div>Fallos: ${fallos}</div><div>Tiempo: ${tiempo}</div>`,
+            icon: "success",
+        })
+        .then(() => {
+            sonido.victoria.pause();
+            sonido.victoria.currentTime = 0; // Si queremos que vuelva al comienzo
+            document.getElementById("animales").classList.remove("animacionVictoria");
+            reiniciar();
         });
-
     }
 }
 
-iniciar();
-document.getElementById("animales").addEventListener("click", comprobarAnimal);
+function reiniciar() {
+    Swal.fire({
+        title: "¿Comenzar de nuevo?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                iniciar();
+            }
+    });
+}
+
+Swal.fire({
+  title: "Aprende inglés",
+  text: "Selecciona el animal que corresponda con la palabra mostrada",
+  icon: "info"
+})
+.then( () => iniciar()
+);
+
+
+
+document.getElementById("reiniciar").addEventListener("click", reiniciar);
 
