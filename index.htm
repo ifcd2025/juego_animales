@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- imágenes de https://www.svgrepo.com/collection/animal-icons/2 (salvo icono reset de https://www.flaticon.com)
+     Sonidos de https://freesound.org (recordtados con https://mp3cut.net/es/)
+     Practicando https://sweetalert2.github.io/
+     -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de animales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <style>
+        .animal {
+            width: 150px;
+            height: 150px;
+        }
+        .animal:hover {
+            transition: box-shadow 1s;
+            border-color: rgb(205, 204, 204) !important; /* Debido al uso de BootStrap debemso usar !important*/
+            box-shadow: none !important;
+        }
+        .bien {
+            background-color: green;
+        }
+        #animalElegido {
+            width: fit-content;
+        }
+        #info {
+            background-color: rgb(117, 248, 117);
+            text-align: center;
+        }
+        .mal {
+            animation: animacionFallo .5s linear;
+        }
+        #reiniciar {
+            width: 1.5rem;
+        }
+        #tiempo {
+            /* Le damos un ancho para que no se vaya moviendo el tiempo y el icono de reiniciar según vayan apareciendo más dígitos */
+            width: 3ch; /* ancho del carácter cero */
+            display: inline-block;
+        }
+
+        .animacionAnimalElegido {
+            animation: animacionAnimalElegido .5s linear;
+        }
+
+        @keyframes animacionAnimalElegido {
+            50% {
+                transform: scale(0.5);
+            }
+        }
+        .animacionFallo {
+            animation: animacionFallo .5s linear;
+        }
+        @keyframes animacionFallo {
+            50% {
+                background-color: red;
+            }
+        }        
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="index.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 class="text-center">Aprende inglés</h1>
+    </header>
+    <main>
+        <div clas="text-center">
+            <h2 id="animalElegido" class="text-white p-2 bg-black m-auto my-2 rounded-2"></h2>
+            <div id="info" class="m-auto my-2 p-2">
+                Aciertos: <span id="aciertos">0</span>
+                Fallos: <span id="fallos">0</span>
+                Tiempo: <span id="tiempo">0</span>
+                <img src="imagenes/reset2.png" alt="reiniciar" id="reiniciar">
+            </div>
+        </div>
+        <div id="animales" class="d-flex justify-content-center gap-3 flex-wrap">
+        </div>
+    </main>
+</body>
+</html>
